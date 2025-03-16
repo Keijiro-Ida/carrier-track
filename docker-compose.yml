@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  # Laravel API (Apache + PHP-FPM)
+  back:
+    container_name: laravel_back
+    build: ./back
+    volumes:
+      - ./back:/var/www/html
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - "9000:80"
+    depends_on:
+      - db
+    tty: true
+    stdin_open: true
+
+  # MySQL
+  db:
+    image: mysql:5.7
+    platform: linux/amd64
+    container_name: laravel_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    ports:
+      - "13306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # React フロントエンド
+  front:
+    container_name: react_front
+    build: ./front
+    volumes:
+      - ./front:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - back
+    stdin_open: true
+    tty: true
+
+volumes:
+  mysql_data:
