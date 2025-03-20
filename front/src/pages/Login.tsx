@@ -1,26 +1,39 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthCard  from "../components/AuthCard";
+import { useAuth } from "../context/AuthContext";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    await fetch("http://localhost:9000/sanctum/csrf-cookie", {
+      credentials: "include",
+    });
+
     const response = await fetch("http://localhost:9000/api/login", {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
 
+    if (!response.ok) {
+      setError("ログインに失敗しました。");
+      return;
+    }
+
     const data = await response.json();
     console.log(data);
+
     if (response.ok) {
-      localStorage.setItem("token", data.token);
+      login(data.token);  // ✅ tokenを保存
       navigate("/dashboard");
     } else {
       setError("ログインに失敗しました。");

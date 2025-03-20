@@ -26,9 +26,9 @@ class AuthController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $token = $user->createToken('auth_token')->accessToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json(['token' => $token]);
+        return response()->json(['token' => $token], 200);
     }
 
     public function register(Request $request)

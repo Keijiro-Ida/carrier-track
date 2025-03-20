@@ -93,7 +93,7 @@ const Register: React.FC = () => {
       <p className="text-sm text-center mt-4">
         アカウントをお持ちの方は <a href="/login" className="text-blue-500 hover:underline">こちら</a>
       </p>
-  </AuthCard>
+    </AuthCard>
   );
 };
 
